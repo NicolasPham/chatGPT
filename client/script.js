@@ -60,12 +60,25 @@ function showMessage(isAI, value, id) {
 function handleSubmit(e) {
   e.preventDefault();
 
-  const data = FormData(form);
+  const data = new FormData(form);
 
   //user chat
   chatContainer.innerHTML += showMessage(false, data.get('prompt'));
+  form.reset();
 
   //bot chat
   const uniqueId = createUniqueId();
-  chatContainer.innerHTML
+  chatContainer.innerHTML += showMessage(true, "", uniqueId);
+
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  const messageDiv = document.getElementById(uniqueId);
+  loader(messageDiv)
 }
+
+form.addEventListener('submit', handleSubmit);
+form.addEventListener('keyup', (e) => {
+  if (e.key === "Enter") {
+    handleSubmit(e)
+  }
+})
