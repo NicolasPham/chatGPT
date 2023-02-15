@@ -1,5 +1,6 @@
 import bot from './assets/bot.svg';
 import user from './assets/user.svg';
+import axios from 'axios';
 
 const form = document.querySelector('form');
 const chatContainer = document.querySelector('#chat_container');
@@ -16,18 +17,24 @@ function loader(element) {
       element.textContent = "";
     }
   }, 300)
+
 }
 
 
 function typeText(element, text) {
   let index = 0;
 
-  while (index < text.length) {
-    setTimeout(() => {
+  let interval = setInterval(() => {
+
+    if (index < text.length) {
       element.innerHTML += text.charAt(index);
-      index++;
-    }, 20)
-  }
+      index += 1;
+    } else {
+      clearInterval(interval);
+    }
+
+  }, 20)
+
 } //maybe need to change to if and setInterval
 
 
@@ -57,7 +64,7 @@ function showMessage(isAI, value, id) {
 }
 
 
-function handleSubmit(e) {
+async function handleSubmit(e) {
   e.preventDefault();
 
   const data = new FormData(form);
@@ -68,12 +75,26 @@ function handleSubmit(e) {
 
   //bot chat
   const uniqueId = createUniqueId();
-  chatContainer.innerHTML += showMessage(true, "", uniqueId);
+  chatContainer.innerHTML += showMessage(true, " ", uniqueId);
 
   chatContainer.scrollTop = chatContainer.scrollHeight;
 
   const messageDiv = document.getElementById(uniqueId);
+
   loader(messageDiv)
+
+  // fetching data from server
+  const response = await axios.post('http://localhost:5001/', { prompt: data.get('prompt') })
+  console.log(response)
+  clearInterval(loadInterval);
+  messageDiv.innerHTML = "";
+
+  if (response) {
+    typeText(messageDiv, response.data)
+  } else {
+    messageDiv.innerHTML = "Something went wrong"
+  }
+
 }
 
 form.addEventListener('submit', handleSubmit);
