@@ -11,3 +11,8 @@ mkdir server
 cd server
 npm init -y
 npm install cors dotenv express nodemon openai
+
+
+dotenv.config();
+app.use(cors());
+app.use(express.json());
