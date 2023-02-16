@@ -84,7 +84,7 @@ async function handleSubmit(e) {
   loader(messageDiv)
 
   // fetching data from server
-  const response = await axios.post('http://localhost:5001/', { prompt: data.get('prompt') })
+  const response = await axios.post('https://nicolas-chatgpt.onrender.com/', { prompt: data.get('prompt') })
   console.log(response)
   clearInterval(loadInterval);
   messageDiv.innerHTML = "";
